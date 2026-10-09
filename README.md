@@ -18,6 +18,7 @@ This project is a data pipeline that processes hourly public transport data publ
 - Format: Monthly CSV files
 - License: Istanbul Metropolitan Municipality Open Data License
 - Link: [data.ibb.gov.tr](https://data.ibb.gov.tr/dataset/hourly-public-transport-data-set)
+- Coverage: January 2020 – December 2024
 
 ## Status
 
