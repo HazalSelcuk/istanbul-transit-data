@@ -21,4 +21,4 @@ This project is a data pipeline that processes hourly public transport data publ
 
 ## Status
 
-This project is currently in development. s
+This project is currently in development. 
