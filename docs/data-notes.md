@@ -27,7 +27,9 @@ Observations below are based on the portal preview of June 2024, which shows onl
 - December 2024: the download file is named `hourly_transportation_202512.csv` (December 2025), but the page title says December 2024. The file was created on 4 January 2025, so the file name is most likely a typo. To be confirmed by checking `transition_date` values in the file.
 - December 2024: the data preview shows 0 records.
 - `line` and `line_name` are swapped compared to the data dictionary. The dictionary says `line` is the line code and `line_name` is the line name, but the data shows the opposite.
-- Some `town` values are empty. According to the validation rules, these rows will be kept and the district will be set to UNKNOWN.
-- - June 2024: the portal preview and the API sample both have an `_id` column, but the data dictionary does not list it. It is most likely a row number added by the portal. To be checked in the full file.
+- `town`: 4 of 99 sample rows are empty (checked with SQL). According to the validation rules, these rows will be kept and the district will be set to UNKNOWN.
+- June 2024: the portal preview and the API sample both have an `_id` column, but the data dictionary does not list it. It is most likely a row number added by the portal. To be checked in the full file.
 - June 2024: 5000 rows were requested from the API, but only 99 rows were returned. The portal preview also shows 99 rows, so the API seems to hold only a small sample for this month. The API will be used only for testing; the full CSV file will be downloaded for real loading.
 - June 2024 API sample: the header line ends with CRLF, but data lines end with LF. PostgreSQL COPY fails with "unquoted newline found in data". Fixed by removing `\r` characters before loading.
+- `road_type`: values are OTOYOL, RAYLI and DENZ. "DENZ" is probably a typo or abbreviation of "DENIZ" (sea). To be standardized in the staging layer.
+- `product_kind`: 1 of 99 sample rows is NULL. This confirms the rule to keep such rows and set the card type to UNKNOWN.
