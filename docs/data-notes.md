@@ -28,8 +28,13 @@ Observations below are based on the portal preview of June 2024, which shows onl
 - December 2024: the data preview shows 0 records.
 - `line` and `line_name` are swapped compared to the data dictionary. The dictionary says `line` is the line code and `line_name` is the line name, but the data shows the opposite.
 - `town`: 4 of 99 sample rows are empty (checked with SQL). According to the validation rules, these rows will be kept and the district will be set to UNKNOWN.
-- June 2024: the portal preview and the API sample both have an `_id` column, but the data dictionary does not list it. It is most likely a row number added by the portal. To be checked in the full file.
+- June 2024: the portal preview and the API sample both have an `_id` column, but the data dictionary does not list it. It is most likely a row number added by the portal. Confirmed: the full file does not have an `_id` column. It starts with `transition_date` and has 13 columns.
 - June 2024: 5000 rows were requested from the API, but only 99 rows were returned. The portal preview also shows 99 rows, so the API seems to hold only a small sample for this month. The API will be used only for testing; the full CSV file will be downloaded for real loading.
 - June 2024 API sample: the header line ends with CRLF, but data lines end with LF. PostgreSQL COPY fails with "unquoted newline found in data". Fixed by removing `\r` characters before loading.
 - `road_type`: values are OTOYOL, RAYLI and DENZ. "DENZ" is probably a typo or abbreviation of "DENIZ" (sea). To be standardized in the staging layer.
 - `product_kind`: 1 of 99 sample rows is NULL. This confirms the rule to keep such rows and set the card type to UNKNOWN.
+- June 2024 full file: the server reports the file size as 1575 MB, which matches the 1.5 GiB shown on the portal.
+- Full file download: the IBB server closes the connection after about 2 minutes (around 340-385 MB). It does not support resuming a download (`curl: (33) HTTP server doesn't seem to support byte ranges`), so a monthly file cannot be downloaded in one piece with the current connection. A partial file covering June 1–9, 2024 will be used for development. The last line of the partial file is likely incomplete.
+- After several attempts, the server started returning `502 Bad Gateway` (nginx) instead of the file, which suggests the problem is on the server side.
+- June 2024 partial file (`hourly_transportation_202406_partial.csv`): 4,955,362 lines, about 29% of the full file. It covers 2024-06-01 00:00 to 2024-06-09 15:00. The last line is cut in the middle and must be removed before loading.
+- The full file has no CRLF problem (`\r` count is 0). The CRLF issue seen earlier comes only from the API sample.

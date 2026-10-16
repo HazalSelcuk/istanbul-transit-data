@@ -1,5 +1,4 @@
 CREATE TABLE IF NOT EXISTS raw_hourly_transport (
-    _id TEXT,
     transition_date TEXT,
     transition_hour TEXT,
     transport_type_id TEXT,
