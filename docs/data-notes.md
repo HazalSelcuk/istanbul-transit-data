@@ -8,6 +8,7 @@ This document records observations from the IBB Hourly Public Transport Data Set
 - Missing months: none
 - The dataset has not been updated since early 2025.
 - Files are sorted by date and hour: the first rows of a month belong to the first day, hour 00.
+- Rows per day in the partial file (`cut -d, -f1 | sort | uniq -c`): weekdays (June 3–7) have about 620,000–640,000 rows, Saturdays about 550,000 and Sunday (June 2) about 455,000. June 9 is incomplete (data ends at 15:00).
 
 ## Columns
 
