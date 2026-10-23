@@ -39,3 +39,4 @@ Observations below are based on the portal preview of June 2024, which shows onl
 - After several attempts, the server started returning `502 Bad Gateway` (nginx) instead of the file, which suggests the problem is on the server side.
 - June 2024 partial file (`hourly_transportation_202406_partial.csv`): 4,955,362 lines, about 29% of the full file. It covers 2024-06-01 00:00 to 2024-06-09 15:00. The last line is cut in the middle and must be removed before loading.
 - The full file has no CRLF problem (`\r` count is 0). The CRLF issue seen earlier comes only from the API sample.
+- Checked with `src/count_lines.js`: the partial file has 4,955,363 lines (1 header + 4,955,361 data rows + 1 incomplete last line). `wc -l` reports 4,955,362 because the last line has no line break. All lines except the last one have exactly 13 columns, so no value contains a comma.
