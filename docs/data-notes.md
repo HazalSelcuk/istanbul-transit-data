@@ -40,3 +40,10 @@ Observations below are based on the portal preview of June 2024, which shows onl
 - June 2024 partial file (`hourly_transportation_202406_partial.csv`): 4,955,362 lines, about 29% of the full file. It covers 2024-06-01 00:00 to 2024-06-09 15:00. The last line is cut in the middle and must be removed before loading.
 - The full file has no CRLF problem (`\r` count is 0). The CRLF issue seen earlier comes only from the API sample.
 - Checked with `src/count_lines.js`: the partial file has 4,955,363 lines (1 header + 4,955,361 data rows + 1 incomplete last line). `wc -l` reports 4,955,362 because the last line has no line break. All lines except the last one have exactly 13 columns, so no value contains a comma.
+
+
+## Loading Performance
+
+- Row-by-row insert: 10,000 rows in 4.2 s (estimated ~35 min for the partial file).
+- Batch insert (1,000 rows per query): 10,000 rows in 0.21 s, about 20x faster (estimated ~2 min).
+- Full partial file loaded with batch insert: 4,955,361 rows in 1 min 8 s. The count matches the expected number of data rows.

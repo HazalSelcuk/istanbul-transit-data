@@ -4,7 +4,7 @@ const readline = require("readline");
 const { Client } = require("pg");
 
 const filePath = "data/hourly_transportation_202406_partial.csv";
-const LIMIT = 10000;
+const LIMIT = Infinity;
 const BATCH_SIZE = 1000;
 const COLUMN_COUNT = 13;
 
