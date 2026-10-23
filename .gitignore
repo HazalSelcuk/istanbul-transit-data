@@ -2,3 +2,4 @@ data/
 .DS_Store
 .env
 cheatsheet.md
+node_modules/

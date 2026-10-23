@@ -1,0 +1,28 @@
+{
+  "name": "istanbul-transit-data",
+  "version": "1.0.0",
+  "description": "This project is a data pipeline that processes hourly public transport data published monthly by the Istanbul Metropolitan Municipality. It loads the data into a PostgreSQL database, cleans invalid and duplicate records, and models it for analysis. The results are displayed as charts on a web dashboard.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HazalSelcuk/istanbul-transit-data.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/HazalSelcuk/istanbul-transit-data/issues"
+  },
+  "homepage": "https://github.com/HazalSelcuk/istanbul-transit-data#readme",
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "pg": "^8.23.1"
+  }
+}
