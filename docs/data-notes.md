@@ -32,7 +32,7 @@ Observations below are based on the portal preview of June 2024, which shows onl
 - June 2024: the portal preview and the API sample both have an `_id` column, but the data dictionary does not list it. It is most likely a row number added by the portal. Confirmed: the full file does not have an `_id` column. It starts with `transition_date` and has 13 columns.
 - June 2024: 5000 rows were requested from the API, but only 99 rows were returned. The portal preview also shows 99 rows, so the API seems to hold only a small sample for this month. The API will be used only for testing; the full CSV file will be downloaded for real loading.
 - June 2024 API sample: the header line ends with CRLF, but data lines end with LF. PostgreSQL COPY fails with "unquoted newline found in data". Fixed by removing `\r` characters before loading.
-- `road_type`: values are OTOYOL, RAYLI and DENZ. "DENZ" is probably a typo or abbreviation of "DENIZ" (sea). To be standardized in the staging layer.
+  - `road_type`: values are OTOYOL, RAYLI and DENİZ (with Turkish İ). The "DENZ" value seen in the API sample was caused by the API losing the İ character; the original file is correct.
 - `product_kind`: 1 of 99 sample rows is NULL. This confirms the rule to keep such rows and set the card type to UNKNOWN.
 - June 2024 full file: the server reports the file size as 1575 MB, which matches the 1.5 GiB shown on the portal.
 - Full file download: the IBB server closes the connection after about 2 minutes (around 340-385 MB). It does not support resuming a download (`curl: (33) HTTP server doesn't seem to support byte ranges`), so a monthly file cannot be downloaded in one piece with the current connection. A partial file covering June 1–9, 2024 will be used for development. The last line of the partial file is likely incomplete.
@@ -40,6 +40,9 @@ Observations below are based on the portal preview of June 2024, which shows onl
 - June 2024 partial file (`hourly_transportation_202406_partial.csv`): 4,955,362 lines, about 29% of the full file. It covers 2024-06-01 00:00 to 2024-06-09 15:00. The last line is cut in the middle and must be removed before loading.
 - The full file has no CRLF problem (`\r` count is 0). The CRLF issue seen earlier comes only from the API sample.
 - Checked with `src/count_lines.js`: the partial file has 4,955,363 lines (1 header + 4,955,361 data rows + 1 incomplete last line). `wc -l` reports 4,955,362 because the last line has no line break. All lines except the last one have exactly 13 columns, so no value contains a comma.
+  - Full data (June 1–9): 40 distinct districts; 128,421 rows (~2.6%) have an empty `town`.
+  - `product_kind` has 3 rare values not seen in the sample: KULLANILMAYAN_GRUBU (131 rows), DENETIM (107), GIRIS_CIKIS (27). To be decided in the staging layer whether they are real trips.
+  - `load_raw.js` stores empty values as empty strings (''), not NULL. They will be converted to NULL in the staging layer.
 
 
 ## Loading Performance
