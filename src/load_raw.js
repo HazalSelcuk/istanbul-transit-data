@@ -4,7 +4,9 @@ const readline = require("readline");
 const { Client } = require("pg");
 
 const filePath = "data/hourly_transportation_202406_partial.csv";
-const LIMIT = 10;
+const LIMIT = 10000;
+const BATCH_SIZE = 1000;
+const COLUMN_COUNT = 13;
 
 const client = new Client({
   host: "localhost",
@@ -14,15 +16,34 @@ const client = new Client({
   database: process.env.POSTGRES_DB,
 });
 
-const insertSql = `
-  INSERT INTO raw_hourly_transport (
-    transition_date, transition_hour, transport_type_id, road_type, line,
-    transfer_type, number_of_passage, number_of_passenger, product_kind,
-    transaction_type_desc, town, line_name, station_poi_desc_cd
-  ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-`;
+const columns = [
+  "transition_date", "transition_hour", "transport_type_id", "road_type", "line",
+  "transfer_type", "number_of_passage", "number_of_passenger", "product_kind",
+  "transaction_type_desc", "town", "line_name", "station_poi_desc_cd",
+];
+
+async function insertBatch(rows) {
+  const values = [];
+  const rowPlaceholders = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const params = [];
+    for (let j = 0; j < COLUMN_COUNT; j++) {
+      params.push("$" + (i * COLUMN_COUNT + j + 1));
+    }
+    rowPlaceholders.push("(" + params.join(", ") + ")");
+    values.push(...rows[i]);
+  }
+
+  const sql =
+    "INSERT INTO raw_hourly_transport (" + columns.join(", ") + ") VALUES " +
+    rowPlaceholders.join(", ");
+
+  await client.query(sql, values);
+}
 
 async function main() {
+  console.time("load");
   await client.connect();
   await client.query("TRUNCATE TABLE raw_hourly_transport;");
 
@@ -32,21 +53,33 @@ async function main() {
 
   let lineNumber = 0;
   let inserted = 0;
+  let batch = [];
 
   for await (const line of reader) {
     lineNumber++;
     if (lineNumber === 1) continue;
 
     const parts = line.split(",");
-    if (parts.length !== 13) continue;
+    if (parts.length !== COLUMN_COUNT) continue;
 
-    await client.query(insertSql, parts);
-    inserted++;
+    batch.push(parts);
 
-    if (inserted >= LIMIT) break;
+    if (batch.length === BATCH_SIZE) {
+      await insertBatch(batch);
+      inserted += batch.length;
+      batch = [];
+    }
+
+    if (inserted + batch.length >= LIMIT) break;
+  }
+
+  if (batch.length > 0) {
+    await insertBatch(batch);
+    inserted += batch.length;
   }
 
   console.log("Inserted rows:", inserted);
+  console.timeEnd("load");
   await client.end();
 }
 
