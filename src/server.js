@@ -8,7 +8,7 @@ app.use(cors());
 const PORT = 3000;
 
 const pool = new Pool({
-  host: "localhost",
+    host: process.env.POSTGRES_HOST || "localhost",
   port: process.env.POSTGRES_PORT,
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,

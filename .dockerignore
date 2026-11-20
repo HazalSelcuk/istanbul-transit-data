@@ -1,0 +1,6 @@
+node_modules
+data
+dashboard
+.env
+.git
+cheatsheet.md

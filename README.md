@@ -30,6 +30,25 @@ dashboard/   Vue.js dashboard
 docs/        Notes on the data and issues found
 ```
 
+## Quick Start (Docker Compose)
+
+If the database is already loaded, the whole system starts with one command:
+
+```bash
+docker compose up -d
+```
+
+- Dashboard: http://localhost:8080
+- API: http://localhost:3000
+
+To stop it:
+
+```bash
+docker compose down
+```
+
+The database data is stored in the external `transit-pgdata` volume, so it is kept when the containers are removed.
+
 ## How to Run
 
 1. Start PostgreSQL in Docker:
@@ -90,4 +109,4 @@ docs/        Notes on the data and issues found
 
 ## Status
 
-The core pipeline (raw → staging → mart → API → dashboard) is working with June 2024 data. Next steps: running the whole system with Docker Compose and automating monthly loads.
+The core pipeline (raw → staging → mart → API → dashboard) is working with June 2024 data and runs with Docker Compose. Next step: automating monthly loads.
