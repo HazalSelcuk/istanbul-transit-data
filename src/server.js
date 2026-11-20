@@ -49,6 +49,18 @@ app.get("/api/hourly", async (req, res) => {
   res.json(result.rows);
 });
 
+app.get("/api/lines", async (req, res) => {
+  const result = await pool.query(`
+    SELECT l.line_name, SUM(f.number_of_passage)::INTEGER AS total_passages
+    FROM fact_hourly_ridership f
+    JOIN dim_line l ON l.line_id = f.line_id
+    GROUP BY l.line_name
+    ORDER BY total_passages DESC
+    LIMIT 20;
+  `);
+  res.json(result.rows);
+});
+
 app.listen(PORT, () => {
   console.log("Server running on http://localhost:" + PORT);
 });
