@@ -69,3 +69,14 @@ Built with `sql/06_create_mart_tables.sql` and `sql/07_load_mart.sql`, checked w
 - The first load lost 82,652 passages. Rows with an empty `product_kind` (NULL) were dropped by the JOIN, because NULL never equals NULL in SQL.
 - Fix: empty `product_kind` values are replaced with `'UNKNOWN'` using `COALESCE`, both when loading `dim_product` and in the fact table JOIN.
 - After the fix, total passages match: 61,277,058 in both staging and the fact table.
+
+## Downloading Full Months
+
+Tried to download the full April 2020 file (338 MB) on 2026-11-20:
+- The server closes the connection after about 2 minutes (`curl: (18) transfer closed`). At ~0.5–1.3 MB/s, a full month cannot be downloaded in one request.
+- Resume is not supported (`curl -C -` fails with "HTTP server doesn't seem to support byte ranges").
+- The CKAN Data API works: `datastore_search` with `resource_id` returns records as JSON and reports `total` = 3,641,307 rows for April 2020.
+- The dataset page shows "about 4,732,000 records", but this is an estimate. The file size (338 MB at ~94 bytes per row) matches the API total of ~3.6 million rows.
+- Plan: fetch each month from the API in pages using `limit` and `offset`.
+
+Also on 2026-11-20 the Mac's disk was full (383 MB free), which stopped Docker Desktop. Freed ~23 GB. Full data for 2020–2024 will need disk planning (for example, deleting CSV files after loading).
