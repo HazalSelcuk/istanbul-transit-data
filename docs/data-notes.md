@@ -60,3 +60,12 @@ Observations below are based on the portal preview of June 2024, which shows onl
   - Rows with more passengers than trips: 0
   - Empty district (NULL): 128,421 (same as in raw)
   - Date range: 2024-06-01 to 2024-06-09
+
+  ## Mart Layer (June 1–9)
+
+Built with `sql/06_create_mart_tables.sql` and `sql/07_load_mart.sql`, checked with `sql/08_check_mart.sql`:
+- Dimension tables: 9 dates, 874 lines, 9 product kinds (including `UNKNOWN`).
+- Fact table: 483,344 rows, grouped by date, hour, line and product kind.
+- The first load lost 82,652 passages. Rows with an empty `product_kind` (NULL) were dropped by the JOIN, because NULL never equals NULL in SQL.
+- Fix: empty `product_kind` values are replaced with `'UNKNOWN'` using `COALESCE`, both when loading `dim_product` and in the fact table JOIN.
+- After the fix, total passages match: 61,277,058 in both staging and the fact table.
